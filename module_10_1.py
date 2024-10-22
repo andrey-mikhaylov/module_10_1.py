@@ -1,4 +1,5 @@
 from time import sleep, time
+from datetime import datetime
 from threading import Thread
 
 
@@ -11,15 +12,18 @@ def write_words(word_count: int, file_name: str):
     :param file_name: название файла, куда будут записываться слова.
     """
     sleep(0.1)
-    print(f"Завершилась запись в файл {file_name}")
+    print(f"Завершилась запись в файл {file_name}\n", end='', flush=True)
 
 
 def timing(func):
     def wrapper(*args, **kw):
-        time_start = time()
+#        time_start = time()
+        time_start = datetime.now()
         result = func(*args, **kw)
-        time_end = time()
-        print(f'Работа {func.__name__} заняла {time_end - time_start} секунды')
+#        time_end = time()
+        time_end = datetime.now()
+#        print(f'Работа {func.__name__} заняла {time_end - time_start} секунды')
+        print(f'Работа потоков {time_end - time_start}')
         return result
     return wrapper
 
@@ -34,27 +38,33 @@ def test1():
 
 @timing
 def test2():
-    write_words(10, "example1.txt")
-    write_words(30, "example2.txt")
-    write_words(200, "example3.txt")
-    write_words(100, "example4.txt")
+    tasks = [
+        (10, "example1.txt"),
+        (30, "example2.txt"),
+        (200, "example3.txt"),
+        (100, "example4.txt"),
+    ]
+
+    threads = [Thread(target=write_words, args=args) for args in tasks]
+    [thread.start() for thread in threads]
+    [thread.join() for thread in threads]
 
 
-    """
-    Вывод на консоль:
-    Завершилась запись в файл example1.txt
-    Завершилась запись в файл example2.txt
-    Завершилась запись в файл example3.txt
-    Завершилась запись в файл example4.txt
-    Работа потоков 0:00:34.003411 # Может быть другое время
-    Завершилась запись в файл example5.txt
-    Завершилась запись в файл example6.txt
-    Завершилась запись в файл example8.txt
-    Завершилась запись в файл example7.txt
-    Работа потоков 0:00:20.071575 # Может быть другое время
+"""
+Вывод на консоль:
+Завершилась запись в файл example1.txt
+Завершилась запись в файл example2.txt
+Завершилась запись в файл example3.txt
+Завершилась запись в файл example4.txt
+Работа потоков 0:00:34.003411 # Может быть другое время
+Завершилась запись в файл example5.txt
+Завершилась запись в файл example6.txt
+Завершилась запись в файл example8.txt
+Завершилась запись в файл example7.txt
+Работа потоков 0:00:20.071575 # Может быть другое время
 
-    Записанные данные в файл должны выглядеть так:
-    """
+Записанные данные в файл должны выглядеть так:
+"""
 
 
 if __name__ == '__main__':
