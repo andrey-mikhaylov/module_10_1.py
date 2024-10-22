@@ -1,3 +1,67 @@
+from time import sleep, time
+from threading import Thread
+
+
+def write_words(word_count: int, file_name: str):
+    """
+    Функция должна вести запись слов "Какое-то слово № <номер слова по порядку>" в соответствующий файл
+    с прерыванием после записи каждого на 0.1 секунду.
+    Сделать паузу можно при помощи функции sleep из модуля time, предварительно импортировав её: from time import sleep.
+    :param word_count: количество записываемых слов,
+    :param file_name: название файла, куда будут записываться слова.
+    """
+    sleep(0.1)
+    print(f"Завершилась запись в файл {file_name}")
+
+
+def timing(func):
+    def wrapper(*args, **kw):
+        time_start = time()
+        result = func(*args, **kw)
+        time_end = time()
+        print(f'Работа {func.__name__} заняла {time_end - time_start} секунды')
+        return result
+    return wrapper
+
+
+@timing
+def test1():
+    write_words(10, "example1.txt")
+    write_words(30, "example2.txt")
+    write_words(200, "example3.txt")
+    write_words(100, "example4.txt")
+
+
+@timing
+def test2():
+    write_words(10, "example1.txt")
+    write_words(30, "example2.txt")
+    write_words(200, "example3.txt")
+    write_words(100, "example4.txt")
+
+
+    """
+    Вывод на консоль:
+    Завершилась запись в файл example1.txt
+    Завершилась запись в файл example2.txt
+    Завершилась запись в файл example3.txt
+    Завершилась запись в файл example4.txt
+    Работа потоков 0:00:34.003411 # Может быть другое время
+    Завершилась запись в файл example5.txt
+    Завершилась запись в файл example6.txt
+    Завершилась запись в файл example8.txt
+    Завершилась запись в файл example7.txt
+    Работа потоков 0:00:20.071575 # Может быть другое время
+
+    Записанные данные в файл должны выглядеть так:
+    """
+
+
+if __name__ == '__main__':
+    test1()
+    test2()
+
+
 """
 2023/12/09 00:00|Домашнее задание по теме "Создание потоков".
 Если вы решали старую версию задачи, проверка будет производиться по ней.
