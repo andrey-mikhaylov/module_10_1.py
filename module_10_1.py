@@ -1,4 +1,4 @@
-from time import sleep, time
+from time import sleep
 from datetime import datetime
 from threading import Thread
 
@@ -11,7 +11,11 @@ def write_words(word_count: int, file_name: str):
     :param word_count: количество записываемых слов,
     :param file_name: название файла, куда будут записываться слова.
     """
-    sleep(0.1)
+    with open(file_name, 'w') as f:
+        for i in range(1, word_count+1):
+            f.write(f"Какое-то слово № {i}\n")
+            sleep(0.1)
+
     print(f"Завершилась запись в файл {file_name}\n", end='', flush=True)
 
 
@@ -26,13 +30,13 @@ def timing(func):
 
 
 @timing
-def test1(tasks: tuple[tuple[int, str], ...]):
+def test1(*tasks: tuple[int, str]):
     for word_count, file_name in tasks:
         write_words(word_count, file_name)
 
 
 @timing
-def test2(tasks: tuple[tuple[int, str], ...]):
+def test2(*tasks: tuple[int, str]):
     threads = [Thread(target=write_words, args=args) for args in tasks]
     [thread.start() for thread in threads]
     [thread.join() for thread in threads]
@@ -56,9 +60,8 @@ def test2(tasks: tuple[tuple[int, str], ...]):
 
 
 if __name__ == '__main__':
-    examples = (10, "example1.txt"), (30, "example2.txt"), (200, "example3.txt"), (100, "example4.txt")
-    test1(examples)
-    test2(examples)
+    test1((10, "example1.txt"), (30, "example2.txt"), (200, "example3.txt"), (100, "example4.txt"))
+    test2((10, "example5.txt"), (30, "example6.txt"), (200, "example7.txt"), (100, "example8.txt"))
 
 
 """
