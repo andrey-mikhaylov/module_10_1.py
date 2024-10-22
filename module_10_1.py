@@ -17,34 +17,22 @@ def write_words(word_count: int, file_name: str):
 
 def timing(func):
     def wrapper(*args, **kw):
-#        time_start = time()
         time_start = datetime.now()
         result = func(*args, **kw)
-#        time_end = time()
         time_end = datetime.now()
-#        print(f'Работа {func.__name__} заняла {time_end - time_start} секунды')
         print(f'Работа потоков {time_end - time_start}')
         return result
     return wrapper
 
 
 @timing
-def test1():
-    write_words(10, "example1.txt")
-    write_words(30, "example2.txt")
-    write_words(200, "example3.txt")
-    write_words(100, "example4.txt")
+def test1(tasks: tuple[tuple[int, str], ...]):
+    for word_count, file_name in tasks:
+        write_words(word_count, file_name)
 
 
 @timing
-def test2():
-    tasks = [
-        (10, "example1.txt"),
-        (30, "example2.txt"),
-        (200, "example3.txt"),
-        (100, "example4.txt"),
-    ]
-
+def test2(tasks: tuple[tuple[int, str], ...]):
     threads = [Thread(target=write_words, args=args) for args in tasks]
     [thread.start() for thread in threads]
     [thread.join() for thread in threads]
@@ -68,8 +56,9 @@ def test2():
 
 
 if __name__ == '__main__':
-    test1()
-    test2()
+    examples = (10, "example1.txt"), (30, "example2.txt"), (200, "example3.txt"), (100, "example4.txt")
+    test1(examples)
+    test2(examples)
 
 
 """
